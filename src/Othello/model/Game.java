@@ -55,8 +55,4 @@ public interface Game {
     //@ requires isValidMove(move);
     void doMove(Move move);
 
-    Board getboard();
-
-    void changeBoard(Board board);
-
 }
