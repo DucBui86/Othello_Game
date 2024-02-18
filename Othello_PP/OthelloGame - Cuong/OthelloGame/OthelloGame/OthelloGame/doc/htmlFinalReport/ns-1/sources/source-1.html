@@ -1,0 +1,531 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Client</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Client</a>
+</div>
+
+<h1>Coverage Summary for Class: Client (Client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Client</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    77.3%
+  </span>
+  <span class="absValue">
+    (17/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    61.9%
+  </span>
+  <span class="absValue">
+    (109/176)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Client;
+&nbsp;
+&nbsp;
+&nbsp;import Othello.ai.ComputerPlayer;
+&nbsp;import Othello.ai.NaiveStrategy;
+&nbsp;import Othello.ai.SmartStrategy;
+&nbsp;import Othello.model.*;
+&nbsp;import Othello.ui.HumanPlayer;
+&nbsp;
+&nbsp;
+&nbsp;import java.io.*;
+&nbsp;import java.net.InetAddress;
+&nbsp;import java.net.Socket;
+&nbsp;import java.util.Scanner;
+&nbsp;
+&nbsp;/**
+&nbsp; * Client class
+&nbsp; */
+&nbsp;
+&nbsp;public class Client implements Runnable {
+&nbsp;    private static final String DESCRIPTION = &quot;MONO&quot;;
+&nbsp;    private ClientStatus status;
+&nbsp;    private Socket socket;
+&nbsp;    public BufferedReader input;
+&nbsp;    public PrintWriter output;
+&nbsp;    public String username;
+&nbsp;    OthelloGame othelloGame;
+&nbsp;    AbstractPlayer player;
+<b class="fc">&nbsp;    private boolean connected = false;</b>
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     *
+&nbsp;     * @throws IOException
+&nbsp;     */
+<b class="fc">&nbsp;    public Client() throws IOException {</b>
+<b class="fc">&nbsp;           this.socket = null;</b>
+<b class="fc">&nbsp;           this.status = ClientStatus.START;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set status for client.
+&nbsp;     * @param clientStatus
+&nbsp;     */
+&nbsp;    public void setStatus(ClientStatus clientStatus) {
+<b class="fc">&nbsp;        this.status = clientStatus;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Return true if connect to server with IP address and port, otherwise return false.
+&nbsp;     * Start thread, read and write message via socket.
+&nbsp;     * @param address IP address
+&nbsp;     * @param port port number
+&nbsp;     * @return return true if connection is successful, otherwise return false.
+&nbsp;     */
+&nbsp;    //@requires address != null &amp;&amp; 0 &lt;= port &amp;&amp; port &lt;= 65536;
+&nbsp;    //@ensures \result == true &lt;==&gt; socket.getInetAddress().equals(address) &amp;&amp; socket.getLocalPort() == port;
+&nbsp;    public boolean connect(InetAddress address, int port) {
+&nbsp;        try {
+<b class="fc">&nbsp;            this.socket = new Socket(address, port);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;[CLIENT] connect to &quot; + address);</b>
+&nbsp;
+<b class="fc">&nbsp;            this.output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);</b>
+<b class="fc">&nbsp;            this.input = new BufferedReader(new InputStreamReader(socket.getInputStream()));</b>
+&nbsp;
+<b class="fc">&nbsp;            Thread thread = new Thread(this);</b>
+<b class="fc">&nbsp;            thread.start();</b>
+<b class="fc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Could not be connected!!!&quot;);</b>
+<b class="nc">&nbsp;            return false;</b>
+<b class="nc">&nbsp;        } catch (IllegalArgumentException e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Error: port number is invalid&quot;);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Close the socket.
+&nbsp;     * change the status connection to false.
+&nbsp;     */
+&nbsp;    //@ensures connected == false &amp;&amp; socket.isClosed() == true;
+&nbsp;    public void close() {
+&nbsp;        try {
+<b class="nc">&nbsp;            socket.close();</b>
+<b class="nc">&nbsp;            this.connected = false;</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Error IO&quot;);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Run method of thread. Send command to HELLO to server and change the status of client.
+&nbsp;     * If socket is connected. Read the message from the server and handle the message.
+&nbsp;     */
+&nbsp;    /*@
+&nbsp;        requires connected == true &amp;&amp; input != null;
+&nbsp;        ensures status == ClientStatus.HELLO_WAITING;
+&nbsp;    */
+&nbsp;    @Override
+&nbsp;    public void run() {
+<b class="fc">&nbsp;        sendCommand(Command.HELLO, DESCRIPTION);</b>
+<b class="fc">&nbsp;        setStatus(ClientStatus.HELLO_WAITING);</b>
+<b class="fc">&nbsp;        this.connected = true;</b>
+<b class="fc">&nbsp;        while (connected) {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                String message = input.readLine();</b>
+<b class="fc">&nbsp;                if (message == null) {</b>
+<b class="nc">&nbsp;                    continue;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                handleCommand(message);</b>
+<b class="nc">&nbsp;            } catch (IOException e) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Error IO&quot;);</b>
+<b class="nc">&nbsp;                this.close();</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Send username to server.
+&nbsp;     * @param username username is input and send to server.
+&nbsp;     * @return return true when username was sent to server, otherwise return false and close socket.
+&nbsp;     */
+&nbsp;    public boolean sendUsername(String username) {
+&nbsp;        try {
+<b class="fc">&nbsp;            output.println(username);</b>
+<b class="fc">&nbsp;            output.flush();</b>
+<b class="fc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Error Ex&quot;);</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Send message to server
+&nbsp;     * @param message message is sent to server.
+&nbsp;     */
+&nbsp;    public synchronized void sendMessage(String message) {
+<b class="fc">&nbsp;        output.println(message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Send command to server
+&nbsp;     * @param command command include: HELLO, ALREADYLOGGEDIN, LIST, QUEUE, NEWGAME, MOVE, GAMEOVER, QUIT, ERROR.
+&nbsp;     * @param arguments arguments are sent by server
+&nbsp;     */
+&nbsp;    public synchronized void sendCommand(String command, String... arguments) {
+<b class="fc">&nbsp;        String message = command;</b>
+<b class="fc">&nbsp;        for (String agr : arguments) {</b>
+<b class="fc">&nbsp;            message += &quot;~&quot; + agr;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        System.out.println(&quot;Send command: &quot; + message);</b>
+<b class="fc">&nbsp;        this.sendMessage(message);</b>
+&nbsp;    }
+&nbsp;    /**
+&nbsp;     * If client at hello awaiting status, enter your username and send username to server.
+&nbsp;     * Change status to login a waiting after handle to ready for login.
+&nbsp;     */
+&nbsp;    private synchronized void handleHello() {
+<b class="fc">&nbsp;        if (status.equals(ClientStatus.HELLO_WAITING)) {</b>
+<b class="fc">&nbsp;            Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Welcome to Othello game, Please enter your username: &quot;);</b>
+<b class="fc">&nbsp;            username = sc.nextLine();</b>
+<b class="fc">&nbsp;            if (username.equals(&quot;&quot;)) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Error message!!! Please enter your username: &quot;);</b>
+<b class="nc">&nbsp;                username = sc.nextLine();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            sendUsername(username);</b>
+<b class="fc">&nbsp;            this.getUsernameAndLogin();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receive username and change status of login state to login awaiting.
+&nbsp;     */
+&nbsp;    private synchronized void getUsernameAndLogin() {
+<b class="fc">&nbsp;        sendCommand(Command.LOGIN, username);</b>
+<b class="fc">&nbsp;        setStatus(ClientStatus.LOGIN_WAITING);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle already logged in.
+&nbsp;     * Notice error and try login again.
+&nbsp;     */
+&nbsp;    private synchronized void handleAlreadyLoggedIn() {
+<b class="nc">&nbsp;        System.out.println(&quot;ERROR username, try again!!!&quot;);</b>
+<b class="nc">&nbsp;        this.getUsernameAndLogin();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle loggin. Loggin to server.
+&nbsp;     * Change status to queue and ready for practice requirement.
+&nbsp;     */
+&nbsp;    private synchronized void handleLogin() {
+<b class="fc">&nbsp;        if (status.equals(ClientStatus.LOGIN_WAITING)) {</b>
+<b class="fc">&nbsp;            setStatus(ClientStatus.QUEUE);</b>
+<b class="fc">&nbsp;            this.UserRequired();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Start new game with human player or AI.
+&nbsp;     * @param arg receive command &quot;new game&quot; from server to start new game.
+&nbsp;     */
+&nbsp;    private synchronized void startNewGame(String[] arg) {
+<b class="fc">&nbsp;        if (status.equals(ClientStatus.NEWGAME_WAITING)) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Do you want to use Smart AI or Native AI to play? Type \&quot;-S\&quot; if you want Smart AI and \&quot;-N\&quot; if you want Native AI, otherwise \&quot;NO\&quot; &quot;);</b>
+<b class="fc">&nbsp;            Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;            String AI = sc.nextLine().toUpperCase();</b>
+&nbsp;
+<b class="fc">&nbsp;            if (AI.equals(&quot;-S&quot;)) {</b>
+<b class="fc">&nbsp;                player = new ComputerPlayer(new SmartStrategy());</b>
+<b class="nc">&nbsp;            } else if (AI.equals(&quot;-N&quot;)) {</b>
+<b class="nc">&nbsp;                player = new ComputerPlayer(new NaiveStrategy());</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                player = new HumanPlayer(username, null);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            boolean firstPlayer = arg[1].equals(username);</b>
+<b class="fc">&nbsp;            if (firstPlayer) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Start game with &quot; + arg[1]);</b>
+<b class="nc">&nbsp;                player.setMark(Mark.XX);</b>
+<b class="nc">&nbsp;                AbstractPlayer Player2 = new HumanPlayer(arg[2], Mark.OO);</b>
+<b class="nc">&nbsp;                this.othelloGame = new OthelloGame(player, Player2);</b>
+&nbsp;
+<b class="nc">&nbsp;            } else {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Start game with &quot; + arg[2]);</b>
+<b class="fc">&nbsp;                AbstractPlayer Player1 = new HumanPlayer(arg[1], Mark.XX);</b>
+<b class="fc">&nbsp;                player.setMark(Mark.OO);</b>
+<b class="fc">&nbsp;                this.othelloGame = new OthelloGame(Player1, player);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            System.out.println(othelloGame);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (othelloGame.getTurn() == player) {</b>
+<b class="nc">&nbsp;                makeMove();</b>
+<b class="nc">&nbsp;                setStatus(ClientStatus.MOVE_WAITING);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                System.out.println(&quot;Waiting the opponent player do move!!!&quot;);</b>
+<b class="fc">&nbsp;                setStatus(ClientStatus.MOVE_WAITING);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * makeMove and send this index move to server
+&nbsp;     * change the client status
+&nbsp;     */
+&nbsp;    private synchronized void makeMove() {
+<b class="fc">&nbsp;        if (othelloGame.getValidMoves().size() == 0) {</b>
+<b class="fc">&nbsp;            sendCommand(Command.MOVE, Integer.toString(64));</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            Move move = player.determineMove(othelloGame);</b>
+<b class="fc">&nbsp;            sendCommand(Command.MOVE, Integer.toString(move.getRow() * 8 + move.getCol()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;            setStatus(ClientStatus.MOVE_WAITING);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle move, receive index move from server and doMove.
+&nbsp;     * Checks if it is player&#39;s turn -&gt; makeMove, otherwise wait the opponent player do move.
+&nbsp;     * @param arg
+&nbsp;     */
+&nbsp;    private synchronized void handleMove(String[] arg) {
+<b class="fc">&nbsp;        if (status.equals(ClientStatus.MOVE_WAITING)) {</b>
+<b class="fc">&nbsp;            int index = Integer.parseInt(arg[1]);</b>
+<b class="fc">&nbsp;            int row = index / 8;</b>
+<b class="fc">&nbsp;            int col = index % 8;</b>
+<b class="fc">&nbsp;            othelloGame.doMove(new OthelloMove(othelloGame.getMark(),row,col));</b>
+<b class="fc">&nbsp;            System.out.println(othelloGame);</b>
+<b class="fc">&nbsp;            if (othelloGame.isGameover()) {</b>
+<b class="fc">&nbsp;                System.out.println(&quot;GameOver!!!&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (othelloGame.getTurn() == player) {</b>
+<b class="fc">&nbsp;               makeMove();</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;               System.out.println(&quot;Waiting the opponent player do move&quot;);</b>
+<b class="fc">&nbsp;               setStatus(ClientStatus.MOVE_WAITING);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handle game over and notice who is winner and lost or no winner.
+&nbsp;     * @param arg receive command from server.
+&nbsp;     */
+&nbsp;    private synchronized void handleGameOver(String[] arg) {
+<b class="fc">&nbsp;        if (arg[1].equals(&quot;DRAW&quot;)) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;DRAW. No winner!!!&quot;);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            String playerGame = &quot;Player: &quot; + arg[2] + &quot; WinWin.&quot;;</b>
+<b class="fc">&nbsp;            switch (arg[1]) {</b>
+&nbsp;                case GameOver.VICTORY:
+<b class="fc">&nbsp;                    if (arg[2].equals(username)) {</b>
+<b class="nc">&nbsp;                        System.out.println(&quot;WinWin!!! &quot; + arg[2]);</b>
+&nbsp;                    } else {
+<b class="fc">&nbsp;                        System.out.println(&quot;Lost!!! \n&quot; + playerGame);</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    break;</b>
+&nbsp;                case GameOver.DISCONNECT:
+<b class="nc">&nbsp;                    System.out.println(&quot;DISCONNECT: &quot; + arg[2]);</b>
+<b class="nc">&nbsp;                    break;</b>
+&nbsp;                default:
+<b class="nc">&nbsp;                    System.out.println(&quot;ERROR ERROR&quot;);</b>
+&nbsp;                    break;
+&nbsp;            }
+<b class="fc">&nbsp;            setStatus(ClientStatus.NEWGAME_WAITING);</b>
+<b class="fc">&nbsp;            this.UserRequired();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * HandleList prints active players on server.
+&nbsp;     * @param arg receive list online players from server.
+&nbsp;     */
+&nbsp;    private synchronized void handleList(String[] arg) {
+<b class="nc">&nbsp;        System.out.println(&quot;Active players list: &quot;);</b>
+<b class="nc">&nbsp;        for (int i = 1; i &lt; arg.length; i++) {</b>
+<b class="nc">&nbsp;            System.out.println(arg[i]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        this.UserRequired();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Quit game and closes the server
+&nbsp;     */
+&nbsp;    private void handleQuit() {
+<b class="nc">&nbsp;        System.out.println(&quot;Quit game!!!&quot;);</b>
+<b class="nc">&nbsp;        this.close();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * HandleError notice error that server sent to client.
+&nbsp;     * If error &quot;MOVE&quot;, player makeMove again.
+&nbsp;     * @param arg receive command &quot;ERROR&quot; from server
+&nbsp;     */
+&nbsp;    private synchronized void handleError(String[] arg) {
+<b class="nc">&nbsp;        System.out.println(&quot;Error: &quot; + arg[1]);</b>
+<b class="nc">&nbsp;        if (input.equals(arg[0])) {</b>
+<b class="nc">&nbsp;            makeMove();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * HandleCommand solves the command being received from the server.
+&nbsp;     * @param command
+&nbsp;     */
+&nbsp;    private void handleCommand(String command) {
+<b class="fc">&nbsp;        String[] sp = command.split(&quot;~&quot;);</b>
+<b class="fc">&nbsp;        switch (sp[0]) {</b>
+&nbsp;            case Command.HELLO:
+<b class="fc">&nbsp;                handleHello();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case Command.LOGIN:
+<b class="fc">&nbsp;                handleLogin();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case Command.NEWGAME:
+<b class="fc">&nbsp;                startNewGame(sp);</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case Command.MOVE:
+<b class="fc">&nbsp;                handleMove(sp);</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case Command.GAMEOVER:
+<b class="fc">&nbsp;                handleGameOver(sp);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case Command.LIST:
+<b class="nc">&nbsp;                handleList(sp);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case Command.QUIT:
+<b class="nc">&nbsp;                handleQuit();</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case Command.ALREADYLOGGEDIN:
+<b class="nc">&nbsp;                handleAlreadyLoggedIn();</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case Command.ERROR:
+<b class="nc">&nbsp;                handleError(sp);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            default:
+<b class="nc">&nbsp;                System.out.println(&quot;ERROR SYNTAX&quot;);</b>
+&nbsp;                break;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receive the command from server and handle the requirements
+&nbsp;     */
+&nbsp;    private void UserRequired() {
+<b class="fc">&nbsp;        this.printMenu();</b>
+<b class="fc">&nbsp;        Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        String input = sc.nextLine().toUpperCase();</b>
+&nbsp;
+<b class="fc">&nbsp;        boolean isCommandValid = false;</b>
+<b class="fc">&nbsp;        while (!isCommandValid) {</b>
+<b class="fc">&nbsp;            switch (input) {</b>
+&nbsp;                case Command.QUEUE:
+<b class="fc">&nbsp;                    sendCommand(Command.QUEUE);</b>
+<b class="fc">&nbsp;                    setStatus(ClientStatus.NEWGAME_WAITING);</b>
+<b class="fc">&nbsp;                    isCommandValid = true;</b>
+<b class="fc">&nbsp;                    break;</b>
+&nbsp;                case Command.LIST:
+<b class="nc">&nbsp;                    sendCommand(Command.LIST);</b>
+<b class="nc">&nbsp;                    isCommandValid = true;</b>
+<b class="nc">&nbsp;                    break;</b>
+&nbsp;                case Command.QUIT:
+<b class="nc">&nbsp;                    sendCommand(Command.QUIT);</b>
+<b class="nc">&nbsp;                    isCommandValid = true;</b>
+<b class="nc">&nbsp;                    this.close();</b>
+<b class="nc">&nbsp;                    break;</b>
+&nbsp;                default:
+<b class="nc">&nbsp;                    System.out.println(&quot;ERROR SYNTAX!!!&quot;);</b>
+<b class="nc">&nbsp;                    sendCommand(Command.ERROR);</b>
+<b class="nc">&nbsp;                    this.printMenu();</b>
+<b class="nc">&nbsp;                    input = sc.nextLine().toUpperCase();</b>
+<b class="fc">&nbsp;                    break;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Print Menu.
+&nbsp;     */
+&nbsp;    private void printMenu() {
+<b class="fc">&nbsp;        System.out.println(String.format(&quot;%nCommands:%n&quot;));</b>
+<b class="fc">&nbsp;        System.out.println(String.format(&quot;- %s .................. Queue for a new game%n&quot;, Command.QUEUE));</b>
+<b class="fc">&nbsp;        System.out.println(String.format(&quot;- %s ................... List all the active clients%n&quot;, Command.LIST));</b>
+<b class="fc">&nbsp;        System.out.println(String.format(&quot;- %s ................... End connection with the other party %n&quot;, Command.QUIT));</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Enter your requirement: &quot;);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-01 16:21</div>
+</div>
+</body>
+</html>

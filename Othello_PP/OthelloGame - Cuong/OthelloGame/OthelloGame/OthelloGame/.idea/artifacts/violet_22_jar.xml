@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="violet-22:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/violet_22_jar</output-path>
+    <root id="archive" name="violet-22.jar">
+      <element id="module-output" name="violet-22" />
+    </root>
+  </artifact>
+</component>

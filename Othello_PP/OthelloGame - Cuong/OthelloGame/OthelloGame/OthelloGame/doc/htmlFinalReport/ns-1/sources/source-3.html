@@ -1,0 +1,143 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ClientTUI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Client</a>
+</div>
+
+<h1>Coverage Summary for Class: ClientTUI (Client)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientTUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (1/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    52.4%
+  </span>
+  <span class="absValue">
+    (11/21)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Client;
+&nbsp;
+&nbsp;import Othello.model.Board;
+&nbsp;
+&nbsp;import java.io.*;
+&nbsp;import java.net.InetAddress;
+&nbsp;import java.net.UnknownHostException;
+&nbsp;
+&nbsp;public class ClientTUI implements Runnable {
+&nbsp;    private final Board board;
+&nbsp;    public static void main(String[] args) throws IOException {
+<b class="fc">&nbsp;        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));</b>
+<b class="fc">&nbsp;        Client client = new Client();</b>
+<b class="fc">&nbsp;        boolean isConnected = false;</b>
+<b class="fc">&nbsp;        while (!isConnected) {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                System.out.println(&quot;\n Enter your port number (from 0 to 65536): &quot;);</b>
+<b class="fc">&nbsp;                int portServer = Integer.parseInt(in.readLine());</b>
+<b class="fc">&nbsp;                System.out.println(&quot;\n Enter your server address: &quot;);</b>
+<b class="fc">&nbsp;                String serverAddress = in.readLine();</b>
+<b class="fc">&nbsp;                if (!client.connect(InetAddress.getByName(serverAddress), portServer)) {</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;Error: failed to connect&quot;);</b>
+<b class="nc">&nbsp;                    System.out.println(&quot;Let&#39;s try again.&quot;);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                isConnected = true;</b>
+<b class="nc">&nbsp;            } catch (UnknownHostException e) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Error: server is invalid&quot;);</b>
+<b class="nc">&nbsp;            } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;                System.out.println(&quot;Error: port number is invalid&quot;);</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public ClientTUI() {</b>
+<b class="nc">&nbsp;        this.board = new Board();</b>
+<b class="nc">&nbsp;        new Thread(this).start();</b>
+&nbsp;    }
+&nbsp;    @Override
+<b class="nc">&nbsp;    public void run() {}</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-01 16:21</div>
+</div>
+</body>
+</html>

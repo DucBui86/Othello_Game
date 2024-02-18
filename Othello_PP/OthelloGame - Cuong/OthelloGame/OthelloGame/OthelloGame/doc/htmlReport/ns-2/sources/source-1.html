@@ -1,0 +1,147 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AbstractPlayer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Othello.model</a>
+</div>
+
+<h1>Coverage Summary for Class: AbstractPlayer (Othello.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractPlayer</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Othello.model;
+&nbsp;
+&nbsp;/**
+&nbsp; * A player of a game.
+&nbsp; */
+&nbsp;public abstract class AbstractPlayer implements Player {
+&nbsp;    private final String name;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new Player object.
+&nbsp;     */
+&nbsp;    /*@ requires name != null;
+&nbsp;        ensures getName() == name;
+&nbsp;    @*/
+<b class="nc">&nbsp;    public AbstractPlayer(String name) {</b>
+<b class="nc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the name of the player.
+&nbsp;     * @return the name of the player
+&nbsp;     */
+&nbsp;    public String getName() {
+<b class="nc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Determines the next move, if the game still has available moves.
+&nbsp;     * @param game the current game
+&nbsp;     * @return the player&#39;s choice
+&nbsp;     */
+&nbsp;    //@ requires !game.isGameover();
+&nbsp;    //@ ensures game.isValidMove(\result);
+&nbsp;    public abstract Move determineMove(Game game);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a representation of a player, i.e., their name
+&nbsp;     * @return the String representation of this object
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;Player &quot; + name ;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-01-25 10:12</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Strategy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Othello.ai</a>
+</div>
+
+<h1>Coverage Summary for Class: Strategy (Othello.ai)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Strategy</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Othello.ai;
+&nbsp;
+&nbsp;
+&nbsp;import Othello.model.Game;
+&nbsp;import Othello.model.Move;
+&nbsp;
+&nbsp;public interface Strategy {
+&nbsp;    /**
+&nbsp;     * Returns the name of the strategy.
+&nbsp;     * @return the name of the strategy
+&nbsp;     */
+&nbsp;    String getName();
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Return a next legal move
+&nbsp;     * @param game the current game
+&nbsp;     * @return a next legal move
+&nbsp;     * @ensures \result != null &amp;&amp; game.isLegalMove(\result)
+&nbsp;     */
+&nbsp;    Move determineMove(Game game);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-01-25 10:12</div>
+</div>
+</body>
+</html>

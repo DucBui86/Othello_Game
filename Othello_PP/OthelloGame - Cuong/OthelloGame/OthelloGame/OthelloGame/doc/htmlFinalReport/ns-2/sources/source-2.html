@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OthelloTUI</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Othello.ui</a>
+</div>
+
+<h1>Coverage Summary for Class: OthelloTUI (Othello.ui)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">OthelloTUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    46.2%
+  </span>
+  <span class="absValue">
+    (24/52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Othello.ui;
+&nbsp;
+&nbsp;
+&nbsp;import Othello.ai.ComputerPlayer;
+&nbsp;import Othello.ai.NaiveStrategy;
+&nbsp;import Othello.ai.SmartStrategy;
+&nbsp;import Othello.model.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+<b class="fc">&nbsp;public class OthelloTUI {</b>
+&nbsp;
+&nbsp;    public static void main(String[] args) {
+<b class="fc">&nbsp;        OthelloTUI object = new OthelloTUI();</b>
+<b class="fc">&nbsp;        object.run();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void run() {
+<b class="fc">&nbsp;        Scanner sc = new Scanner(System.in);</b>
+<b class="fc">&nbsp;        String word = &quot;YES&quot;;</b>
+&nbsp;        do {
+<b class="fc">&nbsp;            System.out.print(&quot;Enter the first player&#39;s name: &quot;);</b>
+<b class="fc">&nbsp;            String name1 = sc.nextLine();</b>
+<b class="fc">&nbsp;            System.out.print(&quot;Enter the second player&#39;s name: &quot;);</b>
+<b class="fc">&nbsp;            String name2 = sc.nextLine();</b>
+&nbsp;
+<b class="fc">&nbsp;            HumanPlayer humanPlayer1 = new HumanPlayer(name1, Mark.XX);</b>
+<b class="fc">&nbsp;            HumanPlayer humanPlayer2 = new HumanPlayer(name2, Mark.OO);</b>
+<b class="fc">&nbsp;            OthelloGame othelloGame = new OthelloGame(humanPlayer1, humanPlayer2);</b>
+&nbsp;
+<b class="fc">&nbsp;            if (name1.equals(&quot;-N&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer = new ComputerPlayer(new NaiveStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(computerPlayer, humanPlayer2);</b>
+<b class="nc">&nbsp;            } else if (name2.equals(&quot;-N&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer = new ComputerPlayer(new NaiveStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(humanPlayer1, computerPlayer);</b>
+<b class="nc">&nbsp;            }else if (name1.equals(&quot;-S&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer = new ComputerPlayer(new SmartStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(computerPlayer, humanPlayer2);</b>
+<b class="nc">&nbsp;            } else if (name2.equals(&quot;-S&quot;)) {</b>
+<b class="fc">&nbsp;                ComputerPlayer computerPlayer = new ComputerPlayer(new SmartStrategy());</b>
+<b class="fc">&nbsp;                othelloGame = new OthelloGame(humanPlayer1, computerPlayer);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if ( name1.equals(&quot;-N&quot;) &amp;&amp; name2.equals(&quot;-N&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer1 = new ComputerPlayer(new NaiveStrategy());</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer2 = new ComputerPlayer(new NaiveStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(computerPlayer1, computerPlayer2);</b>
+&nbsp;
+<b class="nc">&nbsp;            } else if ( name1.equals(&quot;-S&quot;) &amp;&amp; name2.equals(&quot;-S&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer1 = new ComputerPlayer(new SmartStrategy());</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer2 = new ComputerPlayer(new SmartStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(computerPlayer1, computerPlayer2);</b>
+&nbsp;
+<b class="nc">&nbsp;            } else if ( name1.equals(&quot;-N&quot;) &amp;&amp; name2.equals(&quot;-S&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer1 = new ComputerPlayer(new NaiveStrategy());</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer2 = new ComputerPlayer(new SmartStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(computerPlayer1, computerPlayer2);</b>
+&nbsp;
+<b class="nc">&nbsp;            } else if ( name1.equals(&quot;-S&quot;) &amp;&amp; name2.equals(&quot;-N&quot;)) {</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer1 = new ComputerPlayer(new SmartStrategy());</b>
+<b class="nc">&nbsp;                ComputerPlayer computerPlayer2 = new ComputerPlayer(new NaiveStrategy());</b>
+<b class="nc">&nbsp;                othelloGame = new OthelloGame(computerPlayer1, computerPlayer2);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            while (!othelloGame.isGameover()) {</b>
+<b class="fc">&nbsp;                System.out.println(othelloGame);</b>
+<b class="fc">&nbsp;                AbstractPlayer currentPlayer = (AbstractPlayer) othelloGame.getTurn();</b>
+<b class="fc">&nbsp;                Move currentMove = currentPlayer.determineMove(othelloGame);</b>
+<b class="fc">&nbsp;                if (othelloGame.isValidMove(currentMove)) {</b>
+<b class="fc">&nbsp;                    othelloGame.doMove(currentMove);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                System.out.println(&quot;ValidMoves: &quot; + othelloGame.getValidMoves());</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;
+<b class="nc">&nbsp;            System.out.println(&quot;Winner is: &quot; + othelloGame.getWinner());</b>
+<b class="nc">&nbsp;            System.out.print(&quot;Do you want to play another game? If yes, type \&quot;YES\&quot;. Otherwise, type \&quot;NO\&quot;: &quot;);</b>
+<b class="nc">&nbsp;            word = sc.nextLine();</b>
+<b class="nc">&nbsp;        } while (word.equals(&quot;YES&quot;));</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-01 16:21</div>
+</div>
+</body>
+</html>

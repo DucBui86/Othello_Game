@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Game</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Othello.model</a>
+</div>
+
+<h1>Coverage Summary for Class: Game (Othello.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Game</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Othello.model;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * A simple turn-based game.
+&nbsp; */
+&nbsp;public interface Game {
+&nbsp;    //@ invariant !isGameover() ==&gt; getValidMoves().size() &gt; 0;
+&nbsp;    //@ invariant !isGameover() ==&gt; getWinner() == null;
+&nbsp;    //@ invariant !isGameover() ==&gt; getTurn() != null;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Check if the game is over, i.e., there is a winner or no more moves are available.
+&nbsp;     * @return whether the game is over
+&nbsp;     */
+&nbsp;    //@ pure;
+&nbsp;    boolean isGameover();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Query whose turn it is
+&nbsp;     * @return the player whose turn it is
+&nbsp;     */
+&nbsp;    //@ pure;
+&nbsp;    Player getTurn();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the winner of the game. If the game is a draw, then this method returns null.
+&nbsp;     * @return the winner, or null if no player is the winner or the game is not over
+&nbsp;     */
+&nbsp;    //@ pure;
+&nbsp;    Player getWinner();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Return all moves that are valid in the current state of the game
+&nbsp;     * @return the list of currently valid moves
+&nbsp;     */
+&nbsp;    //@ ensures (\forall Move m; \result.contains(m); isValidMove(m));
+&nbsp;    //@ pure;
+&nbsp;    List&lt;Move&gt; getValidMoves(Mark mark);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Check if a move is a valid move
+&nbsp;     * @param move the move to check
+&nbsp;     * @return true if the move is a valid move
+&nbsp;     */
+&nbsp;    //@ ensures \result &lt;==&gt; (\exists Move m;// getValidMoves().contains(m); m.equals(move));
+&nbsp;    //@ pure;
+&nbsp;    boolean isValidMove(Move move);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Perform the move, assuming it is a valid move.
+&nbsp;     * @param move the move to play
+&nbsp;     */
+&nbsp;    //@ requires isValidMove(move);
+&nbsp;    void doMove(Move move);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-01-25 10:12</div>
+</div>
+</body>
+</html>
